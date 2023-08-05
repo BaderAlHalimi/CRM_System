@@ -18,7 +18,7 @@ class CustomerController extends Controller
     public function index()
     {
         //
-        $customers = Customer::where('user_id', Auth::id())->get();
+        $customers = Customer::all();
         return view('dashboard.customers', ['customers' => $customers]);
     }
 
@@ -58,11 +58,11 @@ class CustomerController extends Controller
     public function edit(Customer $customer)
     {
         //
-        if (Auth::id() == $customer->user_id) {
-            return view('dashboard.editcustomer', ['customer' => $customer]);
-        } else {
-            return redirect()->route('customer.index');
-        }
+        // if (Auth::id() == $customer->user_id) {
+        return view('dashboard.editcustomer', ['customer' => $customer]);
+        // } else {
+        //     return redirect()->route('customer.index');
+        // }
     }
 
     /**
@@ -87,13 +87,13 @@ class CustomerController extends Controller
     }
     public function trash()
     {
-        $customers = Customer::onlyTrashed()->where('user_id', Auth::id())->orderBy('deleted_at')->get();
+        $customers = Customer::onlyTrashed()->orderBy('deleted_at')->get();
         return view('dashboard.trashedcustomers', ['customers' => $customers]);
     }
     public function restore($customer)
     {
         // dd($customer);
-        $ctm = Customer::onlyTrashed()->where('user_id', Auth::id())->where('id', $customer)->first();
+        $ctm = Customer::onlyTrashed()->where('id', $customer)->first();
         // dd($ctm);
         if ($ctm->id) {
             $ctm->restore();
@@ -117,26 +117,26 @@ class CustomerController extends Controller
     {
         switch ($request->sort_method) {
             case 1: {
-                    $ctm = Customer::where('user_id', Auth::id())->orderBy('firstname')->get();
+                    $ctm = Customer::orderBy('firstname')->get();
                     break;
                 };
             case 2: {
-                    $ctm = Customer::where('user_id', Auth::id())->orderBy('firstname', 'desc')->get();
+                    $ctm = Customer::orderBy('firstname', 'desc')->get();
                     break;
                 };
             case 3: {
-                    $ctm = Customer::where('user_id', Auth::id())->orderBy('birthdate')->get();
+                    $ctm = Customer::orderBy('birthdate')->get();
                     break;
                 };
             case 4: {
-                    $ctm = Customer::where('user_id', Auth::id())->orderBy('birthdate', 'desc')->get();
+                    $ctm = Customer::orderBy('birthdate', 'desc')->get();
                     break;
                 };
             default: {
-                    $ctm = Customer::where('user_id', Auth::id())->get();
+                    $ctm = Customer::all();
                 };
                 break;
         }
-        return view('dashboard.customers')->with('customers',$ctm);
+        return view('dashboard.customers')->with('customers', $ctm);
     }
 }
